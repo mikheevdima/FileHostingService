@@ -14,5 +14,6 @@ namespace FileHostingService.DataAccess
         void UpdateContent(Guid id, byte[] content);
         File GetInfo(Guid id);
         IEnumerable<File> GetUserFiles(Guid id);
+        byte[] GetContent(Guid id);
     }
 }
