@@ -12,5 +12,6 @@ namespace FileHostingService.Model
         public File FileId { get; set; }
         public User UserId { get; set; }
         public string Text { get; set; }
+        public DateTime AddDate { get; set; }
     }
 }

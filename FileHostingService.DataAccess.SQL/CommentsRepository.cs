@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,7 +23,25 @@ namespace FileHostingService.DataAccess.SQL
 
         public Comment Add(Comment comment)
         {
-            throw new NotImplementedException();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "insert into comments (id, fileid, userid, text, adddate) values (@id, @fileid, @userid, @text, @adddate)";
+                    var commentId = Guid.NewGuid();
+                    var date = DateTime.Now;
+                    command.Parameters.AddWithValue("@id", commentId);
+                    command.Parameters.AddWithValue("@fileid", comment.FileId.Id);
+                    command.Parameters.AddWithValue("@userid", comment.UserId.Id);
+                    command.Parameters.AddWithValue("@text", comment.Text);
+                    command.Parameters.AddWithValue("@adddate", date);
+                    command.ExecuteNonQuery();
+                    comment.Id = commentId;
+                    comment.AddDate = date;
+                    return comment;
+                }
+            }
         }
 
         public Comment Update(Guid id)
@@ -32,17 +51,67 @@ namespace FileHostingService.DataAccess.SQL
 
         public Comment Get(Guid id)
         {
-            throw new NotImplementedException();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "select id, fileid, userid, text, adddate from comments where id = @id";
+                    command.Parameters.AddWithValue("@id", id);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            return new Comment
+                            {
+                                Id = reader.GetGuid(reader.GetOrdinal("id")),
+                                UserId = _usersRepository.Get(reader.GetGuid(reader.GetOrdinal("userid"))),
+                                FileId = _filesRepository.GetInfo(reader.GetGuid(reader.GetOrdinal("fileid"))),
+                                Text = reader.GetString(reader.GetOrdinal("text")),
+                                AddDate = reader.GetDateTime(reader.GetOrdinal("adddate"))
+                            };
+                        }
+                        throw new ArgumentException("Comment not found");
+                    }
+                }
+            }
         }
 
         public void Delete(Guid id)
         {
-            throw new NotImplementedException();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "delete from comments where id = @id";
+                    command.Parameters.AddWithValue("@id", id);
+                    command.ExecuteNonQuery();
+                }
+            }
         }
 
         public IEnumerable<Comment> GetFileComments(Guid id)
         {
-            throw new NotImplementedException();
+            var result = new List<Comment>();
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "select id from comments where fileid = @fileid";
+                    command.Parameters.AddWithValue("@fileid", id);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            result.Add(Get(reader.GetGuid(reader.GetOrdinal("id"))));
+                        }
+                        return result;
+                    }
+                }
+            }
         }
 
         public IEnumerable<Comment> GetUserComment(Guid id)

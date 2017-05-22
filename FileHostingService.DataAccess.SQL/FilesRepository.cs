@@ -36,6 +36,7 @@ namespace FileHostingService.DataAccess.SQL
                     command.Parameters.AddWithValue("@adddate", date);
                     command.ExecuteNonQuery();
                     file.Id = fileId;
+                    file.AddDate = date;
                     return file;
                 }
             }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FileHostingService.DataAccess;
@@ -48,7 +49,7 @@ namespace FileHosting.DataAccess.SQL.Tests
         }
 
         [TestMethod]
-        public void ShouldCreateAndGetInfo()
+        public void ShouldCreateAndGetFileInfo()
         {
             //arrange
             var file = new File
@@ -63,6 +64,7 @@ namespace FileHosting.DataAccess.SQL.Tests
             //asserts
             Assert.AreEqual(file.UserId.Id, result.UserId.Id);
             Assert.AreEqual(file.Name, result.Name);
+            Assert.AreEqual(file.AddDate.ToString(), result.AddDate.ToString());
         }
 
         [TestMethod]
@@ -98,6 +100,37 @@ namespace FileHosting.DataAccess.SQL.Tests
             var resultContent = _filesRepository.GetContent(newFile.Id);
             //asserts
             Assert.IsTrue(content.SequenceEqual(resultContent));
+        }
+
+        [TestMethod]
+        public void ShouldGetUserFiles()
+        {
+            var files = new List<File>();
+            var file1 = new File
+            {
+                Name = "testFile1",
+                UserId = TestUser,
+                AddDate = DateTime.Now
+            };
+            var file2 = new File
+            {
+                Name = "testFile2",
+                UserId = TestUser,
+                AddDate = DateTime.Now
+            };
+            files.Add(file1);
+            files.Add(file2);
+
+            var newFile1 = _filesRepository.Add(files[0]);
+            var newFile2 = _filesRepository.Add(files[1]);
+            var result = _filesRepository.GetUserFiles(TestUser.Id);
+
+            foreach (var res in result)
+            {
+                var i = files.FindIndex(f => f.Id == res.Id);
+                Assert.AreEqual(files[i].Name, res.Name);
+                Assert.AreEqual(files[i].UserId.Id, res.UserId.Id);
+            }
         }
     }
 }
