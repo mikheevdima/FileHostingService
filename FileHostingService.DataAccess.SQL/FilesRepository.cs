@@ -133,8 +133,37 @@ namespace FileHostingService.DataAccess.SQL
                     {
                         while (reader.Read())
                             return reader.GetSqlBinary(reader.GetOrdinal("content")).Value;
-                        throw new ArgumentException($"File {id} not found");
+                        throw new ArgumentException("File not found");
                     }
+                }
+            }
+        }
+
+        public void GiveAccessToFile(Guid userid, Guid fileid)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "insert into shares (userid, fileid) values (@userid, @fileid)";
+                    command.Parameters.AddWithValue("@userId", userid);
+                    command.Parameters.AddWithValue("@fileId", fileid);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteAccessToFile(Guid fileid)
+        {
+            using(var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "delete from shares where userid = @userid";
+                    command.Parameters.AddWithValue("@FileId", fileid);
+                    command.ExecuteNonQuery();
                 }
             }
         }

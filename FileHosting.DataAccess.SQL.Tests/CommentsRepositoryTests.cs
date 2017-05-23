@@ -52,7 +52,7 @@ namespace FileHosting.DataAccess.SQL.Tests
         [TestCleanup]
         public void Clean()
         {
-            /*
+            
             if (TestUser != null)
             {
                 foreach (var file in _filesRepository.GetUserFiles(TestUser.Id))
@@ -64,7 +64,7 @@ namespace FileHosting.DataAccess.SQL.Tests
                 }
                 _usersRepository.Delete(TestUser.Id);
             }
-            */
+            
         }
 
         [TestMethod]

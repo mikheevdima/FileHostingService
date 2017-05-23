@@ -8,7 +8,7 @@ using FileHostingService.Model;
 
 namespace FileHostingService.DataAccess.SQL
 {
-    public class CommentsRepository:ICommentsRepository
+    public class CommentsRepository: ICommentsRepository
     {
         private readonly string _connectionString;
         private readonly IUsersRepository _usersRepository;
@@ -44,7 +44,7 @@ namespace FileHostingService.DataAccess.SQL
             }
         }
 
-        public Comment Update(Guid id)
+        public Comment Update(Guid id, string text)
         {
             throw new NotImplementedException();
         }
