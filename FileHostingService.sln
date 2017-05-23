@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9CCC3CFB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileHosting.DataAccess.SQL.Tests", "FileHosting.DataAccess.SQL.Tests\FileHosting.DataAccess.SQL.Tests.csproj", "{CBC45F09-1400-4F5B-AADA-AA1BBB47C199}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileHostingService.WebApi", "FileHostingService.WebApi\FileHostingService.WebApi.csproj", "{7A2084DD-A443-4831-82DC-197A2DC3DB9F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{CBC45F09-1400-4F5B-AADA-AA1BBB47C199}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBC45F09-1400-4F5B-AADA-AA1BBB47C199}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBC45F09-1400-4F5B-AADA-AA1BBB47C199}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A2084DD-A443-4831-82DC-197A2DC3DB9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A2084DD-A443-4831-82DC-197A2DC3DB9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A2084DD-A443-4831-82DC-197A2DC3DB9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A2084DD-A443-4831-82DC-197A2DC3DB9F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
