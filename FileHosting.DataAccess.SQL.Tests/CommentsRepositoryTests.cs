@@ -23,8 +23,8 @@ namespace FileHosting.DataAccess.SQL.Tests
 
         public CommentsRepositoryTests()
         {
-            _commentsRepository = new CommentsRepository(ConnectionString, _usersRepository, _filesRepository);
             _filesRepository = new FilesRepository(_usersRepository, ConnectionString);
+            _commentsRepository = new CommentsRepository(ConnectionString, _usersRepository, _filesRepository);
         }
 
         [TestInitialize]
@@ -87,6 +87,85 @@ namespace FileHosting.DataAccess.SQL.Tests
             Assert.AreEqual(comment.AddDate.ToString(), result.AddDate.ToString());
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void ShouldDeleteComment()
+        {
+            var comment = new Comment
+            {
+                FileId = TestFile,
+                UserId = TestUser,
+                Text = "Test comment",
+                AddDate = DateTime.Now
+            };
+            var newComment = _commentsRepository.Add(comment);
+            _commentsRepository.Delete(newComment.Id);
 
+            var result = _commentsRepository.Get(newComment.Id);
+        }
+
+        [TestMethod]
+        public void ShouldUpdateComment()
+        {
+            var comment = new Comment
+            {
+                FileId = TestFile,
+                UserId = TestUser,
+                Text = "Test comment",
+                AddDate = DateTime.Now
+            };
+            var newComment = _commentsRepository.Add(comment);
+            var newText = "New comment";
+
+            _commentsRepository.Update(comment.Id, newText);
+            var result = _commentsRepository.Get(comment.Id);
+
+            Assert.IsTrue(newText.SequenceEqual(result.Text));
+        }
+
+        [TestMethod]
+        public void ShouldGetUserAndFileComments()
+        {
+            var comments = new List<Comment>();
+            var comment1 = new Comment
+            {
+                FileId = TestFile,
+                UserId = TestUser,
+                Text = "Test comment",
+                AddDate = DateTime.Now
+            };
+            var comment2 = new Comment
+            {
+                FileId = TestFile,
+                UserId = TestUser,
+                Text = "Test comment2",
+                AddDate = DateTime.Now
+            };
+            comments.Add(comment1);
+            comments.Add(comment2);
+
+            var newComment1 = _commentsRepository.Add(comments[0]);
+            var newComment2 = _commentsRepository.Add(comments[1]);
+            var resultbyUser = _commentsRepository.GetUserComments(TestUser.Id);
+            var resultbyFile = _commentsRepository.GetFileComments(TestFile.Id);
+
+            foreach (var res in resultbyUser)
+            {
+                var i = comments.FindIndex(f => f.Id == res.Id);
+                Assert.AreEqual(comments[i].FileId.Id, res.FileId.Id);
+                Assert.AreEqual(comments[i].UserId.Id, res.UserId.Id);
+                Assert.AreEqual(comments[i].Text, res.Text);
+                Assert.AreEqual(comments[i].AddDate.ToString(), res.AddDate.ToString());
+            }
+
+            foreach (var res in resultbyFile)
+            {
+                var i = comments.FindIndex(f => f.Id == res.Id);
+                Assert.AreEqual(comments[i].FileId.Id, res.FileId.Id);
+                Assert.AreEqual(comments[i].UserId.Id, res.UserId.Id);
+                Assert.AreEqual(comments[i].Text, res.Text);
+                Assert.AreEqual(comments[i].AddDate.ToString(), res.AddDate.ToString());
+            }
+        }
     }
 }

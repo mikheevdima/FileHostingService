@@ -44,9 +44,19 @@ namespace FileHostingService.DataAccess.SQL
             }
         }
 
-        public Comment Update(Guid id, string text)
+        public void Update(Guid id, string text)
         {
-            throw new NotImplementedException();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "update comments set text = @text where id = @id";
+                    command.Parameters.AddWithValue("@text", text);
+                    command.Parameters.AddWithValue("@id", id);
+                    command.ExecuteNonQuery();
+                }
+            }
         }
 
         public Comment Get(Guid id)
@@ -114,9 +124,27 @@ namespace FileHostingService.DataAccess.SQL
             }
         }
 
-        public IEnumerable<Comment> GetUserComment(Guid id)
+        public IEnumerable<Comment> GetUserComments(Guid id)
         {
-            throw new NotImplementedException();
+            var result = new List<Comment>();
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "select id from comments where userid = @userid";
+                    command.Parameters.AddWithValue("@userid", id);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            result.Add(Get(reader.GetGuid(reader.GetOrdinal("id"))));
+                        }
+                        return result;
+                    }
+                }
+            }
         }
     }
 }

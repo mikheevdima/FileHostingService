@@ -10,10 +10,10 @@ namespace FileHostingService.DataAccess
     public interface ICommentsRepository
     {
         Comment Add(Comment comment);
-        Comment Update(Guid id, string text);
+        void Update(Guid id, string text);
         Comment Get(Guid id);
         void Delete(Guid id);
         IEnumerable<Comment> GetFileComments(Guid id);
-        IEnumerable<Comment> GetUserComment(Guid id);
+        IEnumerable<Comment> GetUserComments(Guid id);
     }
 }
