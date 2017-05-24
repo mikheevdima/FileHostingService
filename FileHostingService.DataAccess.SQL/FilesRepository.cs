@@ -154,16 +154,38 @@ namespace FileHostingService.DataAccess.SQL
             }
         }
 
-        public void DeleteAccessToFile(Guid fileid)
+        public void DeleteAccessToFile(Guid userid, Guid fileid)
         {
             using(var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "delete from shares where userid = @userid";
-                    command.Parameters.AddWithValue("@FileId", fileid);
+                    command.CommandText = "delete from shares where fileid = @fileid";
+                    command.Parameters.AddWithValue("@fileId", fileid);
                     command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public IEnumerable<File> GetAccesibleFiles(Guid userid)
+        {
+            var result = new List<File>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "select fileid from shares where userid = @userid";
+                    command.Parameters.AddWithValue("@userid", userid);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            result.Add(GetInfo(reader.GetGuid(reader.GetOrdinal("fileid"))));
+                        }
+                        return result;
+                    }
                 }
             }
         }

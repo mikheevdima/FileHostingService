@@ -16,6 +16,7 @@ namespace FileHostingService.DataAccess
         IEnumerable<File> GetUserFiles(Guid id);
         byte[] GetContent(Guid id);
         void GiveAccessToFile(Guid userid, Guid fileid);
-        void DeleteAccessToFile(Guid fileid);
+        void DeleteAccessToFile(Guid userid, Guid fileid);
+        IEnumerable<File> GetAccesibleFiles(Guid userid);
     }
 }

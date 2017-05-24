@@ -130,7 +130,61 @@ namespace FileHosting.DataAccess.SQL.Tests
                 var i = files.FindIndex(f => f.Id == res.Id);
                 Assert.AreEqual(files[i].Name, res.Name);
                 Assert.AreEqual(files[i].UserId.Id, res.UserId.Id);
+                Assert.AreEqual(files[i].AddDate.ToString(), res.AddDate.ToString());
             }
         }
+
+        [TestMethod]
+        public void GiveAccessToFileAndGiveAccessibleFiles()
+        {
+            var user2 = new User
+            {
+                Name = "name",
+                Surname = "surname",
+                Email = "test@gmail.com"
+            };
+            var testUser2 = _usersRepository.Add(user2);
+            var file = new File
+            {
+                Name = "testFile",
+                UserId = TestUser,
+                AddDate = DateTime.Now
+            };
+            var newFile = _filesRepository.Add(file);
+
+            _filesRepository.GiveAccessToFile(testUser2.Id, newFile.Id);
+            var result = (List<File>)_filesRepository.GetAccesibleFiles(testUser2.Id);
+
+            var i = result.FindIndex(f => f.Id == newFile.Id);
+            Assert.AreEqual(file.Name, newFile.Name);
+            Assert.AreEqual(file.UserId.Id, newFile.UserId.Id);
+            Assert.AreEqual(file.AddDate.ToString(), newFile.AddDate.ToString());
+        }
+
+        [TestMethod]
+        public void ShouldDeleteAccessToFile()
+        {
+            var user2 = new User
+            {
+                Name = "name",
+                Surname = "surname",
+                Email = "test@gmail.com"
+            };
+            var testUser2 = _usersRepository.Add(user2);
+            var file = new File
+            {
+                Name = "testFile",
+                UserId = TestUser,
+                AddDate = DateTime.Now
+            };
+            var newFile = _filesRepository.Add(file);
+
+            _filesRepository.GiveAccessToFile(testUser2.Id, newFile.Id);
+            _filesRepository.DeleteAccessToFile(testUser2.Id, newFile.Id);
+            var result = (List<File>)_filesRepository.GetAccesibleFiles(testUser2.Id);
+
+            Assert.IsNull(result.Find(f => f.Id == newFile.Id));
+        }
+
     }
 }
