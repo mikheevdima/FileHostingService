@@ -14,10 +14,12 @@ namespace FileHostingService.WebApi.Controllers
         private const string ConnectionString = "Data Source=LENOVO-PC; Initial Catalog=FileSharingDB; Integrated Security=True; Pooling=False";
         private readonly IUsersRepository _usersRepository = new UsersRepository(ConnectionString);
         private readonly IFilesRepository _filesRepository;
+        private readonly ICommentsRepository _commentsRepository;
 
         public UsersController()
         {
             _filesRepository = new FilesRepository(_usersRepository, ConnectionString);
+            _commentsRepository = new CommentsRepository(ConnectionString, _usersRepository, _filesRepository);
         }
 
         [HttpPost]
@@ -43,6 +45,13 @@ namespace FileHostingService.WebApi.Controllers
         public IEnumerable<File> GetUserFiles(Guid id)
         {
             return _filesRepository.GetUserFiles(id);
+        }
+
+        [Route("api/users/{id}/comments")]
+        [HttpGet]
+        public IEnumerable<Comment> GetUserComments(Guid id)
+        {
+            return _commentsRepository.GetUserComments(id);
         }
     }
 }
