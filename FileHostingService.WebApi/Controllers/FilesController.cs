@@ -36,6 +36,7 @@ namespace FileHostingService.WebApi.Controllers
         /// <param name="id"> file id </param>
         /// <returns> </returns>
         [HttpDelete]
+        [Route("api/files/{id}")]
         public void DeleteFile(Guid id)
         {
             _filesRepository.Delete(id);
@@ -45,6 +46,7 @@ namespace FileHostingService.WebApi.Controllers
         /// <param name="id"> file id </param>
         /// <returns> file </returns>
         [HttpGet]
+        [Route("api/files/{id}")]
         public File GetFileInfo(Guid id)
         {
             return _filesRepository.GetInfo(id);
